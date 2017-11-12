@@ -1,10 +1,20 @@
 from flask import Flask, render_template, request, redirect,jsonify, url_for, flash
-app = Flask(__name__)
-
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Restaurant, MenuItem
 
+
+# New imports required for creating anti-forgery token
+# session has benn already used in creating DBSession so session has been
+## changed to login_session
+from flask import session as login_session
+## this login session object will store values in it for the longevity of a user's
+## session with our server
+import random
+import string
+
+
+app = Flask(__name__)
 
 #Connect to Database and create database session
 engine = create_engine('sqlite:///restaurantmenu.db')
@@ -12,6 +22,21 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
+
+## new routhing path called login
+@app.route('/login')
+## create a showLogin function that creates a state variable.
+## state will be 32 characters long and contains a mix of upperscase leters and
+## digits.
+def showLogin():
+    ##anti forgery token 32 char long
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in xrange(32))
+    ## we store state in our login_session object ander the name state look 'state'
+    login_session['state'] = state
+## this is to show in the browser what the state token looks like
+    return "The current session state is %s" % login_session['state']
 
 
 #JSON APIs to view Restaurant Information
@@ -84,7 +109,7 @@ def showMenu(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
     items = session.query(MenuItem).filter_by(restaurant_id = restaurant_id).all()
     return render_template('menu.html', items = items, restaurant = restaurant)
-     
+
 
 
 #Create a new menu item
@@ -116,7 +141,7 @@ def editMenuItem(restaurant_id, menu_id):
         if request.form['course']:
             editedItem.course = request.form['course']
         session.add(editedItem)
-        session.commit() 
+        session.commit()
         flash('Menu Item Successfully Edited')
         return redirect(url_for('showMenu', restaurant_id = restaurant_id))
     else:
@@ -127,7 +152,7 @@ def editMenuItem(restaurant_id, menu_id):
 @app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/delete', methods = ['GET','POST'])
 def deleteMenuItem(restaurant_id,menu_id):
     restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
-    itemToDelete = session.query(MenuItem).filter_by(id = menu_id).one() 
+    itemToDelete = session.query(MenuItem).filter_by(id = menu_id).one()
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
