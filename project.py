@@ -35,8 +35,8 @@ def showLogin():
                     for x in xrange(32))
     ## we store state in our login_session object ander the name state look 'state'
     login_session['state'] = state
-## this is to show in the browser what the state token looks like
-    return "The current session state is %s" % login_session['state']
+## RENDER THE LOGIN TEMPLATE
+    return render_template('login.html')
 
 
 #JSON APIs to view Restaurant Information

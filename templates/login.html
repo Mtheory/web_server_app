@@ -1,0 +1,50 @@
+<html>
+<head>
+
+    <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
+    <!--This will create anonymous function that inserts a script into the DOM of
+    the login.html  -->
+       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+      </script>
+
+    <script src="//apis.google.com/js/platform.js?onload=start"> </script>
+    <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
+
+</head>
+
+<body>
+
+
+    <!-- GOOGLE PLUS SIGN IN BUTTON-->
+
+
+              <div id="signinButton">
+                  <!-- data scope parameter specifies what google resourcees we want to access-->
+                  <!--data client id code generated when registered your webapplication with Google Plus -->
+                  <!--data redirecturi parametr sets a post message, enables the one-time use code flow-->
+                  <!--data-accesstype="offline" means that our server can make requests to the google API server even if the  user is not logged in-->
+                  <!--data-cookiepolicy="single_host_origin" determines the scope of uri that can access the cookie. We use the single host orging, is our website
+                  only has a single host name, and no subdomains-->
+                  <!--data-callback="signInCallback" specified call back function
+                  if user clicks andgrant our application access to their profile, this callback method is called
+                 and given the one time use code, along with an access tokken.-->
+                  <!--data-approvalprompt="force"> means that our user has to login each time we visit the login page, and
+                  doesn't check to see if they're already logged in.
+                 This is useful for debugging your app, but you should probably disable it in production since it gets kind of annoying-->
+<!--  -->
+              <span class="g-signin"
+                data-scope="openid email"
+                data-clientid="652245020503-o4lvag05eho5uunqjocf7htpqbo3qahp.apps.googleusercontent.com"
+                data-redirecturi="postmessage"
+                data-accesstype="offline"
+                data-cookiepolicy="single_host_origin"
+                data-callback="signInCallback"
+                data-approvalprompt="force">
+              </span>
+            </div>
+
+
+
+</body>
+
+</html>
