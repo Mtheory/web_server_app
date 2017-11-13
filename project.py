@@ -36,7 +36,7 @@ def showLogin():
     ## we store state in our login_session object ander the name state look 'state'
     login_session['state'] = state
 ## RENDER THE LOGIN TEMPLATE
-    return render_template('login.html')
+    return render_template('login.html', STATE=state)
 
 
 #JSON APIs to view Restaurant Information

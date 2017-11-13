@@ -42,8 +42,51 @@
                 data-approvalprompt="force">
               </span>
             </div>
+            <!--response method after sucessful login  -->
+            <div id="result"></div>
+
+            <script>
+            //defie the sign-in callback function that takes an authResultObject as an imput
+            function signInCallback(authResult) {
+                //if that object contains parament caled code we are sure that autoristaion with Google API was successful
+                // and ONE TIME CODE is present
+              if (authResult['code']) {
+                //Now we have authorization so we can hide Google+ sign in button
+                $('#signinButton').attr('style', 'display: none');
+
+                // Use JQuery to make Ajax call that passes the one time code from Google to hte server
+                $.ajax({
+                  type: 'POST', //  POST method
+                  url: '/gconnect?state={{STATE}}', //URL that this method will call (lets name it gconnect, server state(STATE) token would also be pass)
+                  processData: false, //indicates that we do not want JQuery to proces the reposnse to a string
+                  data: authResult['code'], //HERE we sepcify the data that we're going to send along to our server- the ONE TIME CODE
+                  contentType: 'application/octet-stream; charset=utf-8', //this indicates that we sendding an arbitrary binary stream of data
+
+                  // when we receive a 200 or successful response let's return a successful login message
+                  success: function(result) {
+                    if (result) {
+                    // if server has any additiona response information to pass to client we can present it with result variable
+                      $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+                      // this function would delay for 4 secont and then redirec user to the /restaurant page
+                     setTimeout(function() {
+                      window.location.href = "/restaurant";
+                     }, 4000);
+                // in the event of the error was returned, this would be reported to the console.log
+                  } else if (authResult['error']) {
+                console.log('There was an error: ' + authResult['error']);
+              } else {
+                  // in the event no response was returned by my server to the callback functon , this error
+                  // message will be returned to the result div
+                    $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                     }
+                  }
+
+              }); } }
+            </script>
 
 
+
+    <!--END GOOGLE PLUS SIGN IN BUTTON -->
 
 </body>
 
